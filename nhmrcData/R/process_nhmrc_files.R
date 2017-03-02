@@ -14,7 +14,7 @@ nhmrcExpenditure <- summary_tables_2000_2015 %>%
   slice(1:16) %>%
   rename(calendar_year = `CALENDAR YEAR`, total_expenditure = `TOTAL EXPENDITURE`, active_grants = `# ACTIVE GRANTS`) %>%
   mutate(calendar_year = as.numeric(calendar_year))
-# now save rda
+save(nhmrcExpenditure, file = "data/nhmrcExpenditure.rda")
 
 ## sheet = 2. EXP - MAIN FUNDING TYPE
 nhmrcFundingType <- summary_tables_2000_2015 %>%
@@ -24,7 +24,7 @@ nhmrcFundingType <- summary_tables_2000_2015 %>%
   select(calendar_year = `CALENDAR YR`, infrastructure_support = `INFRASTRUCTURE SUPPORT`, people_support = `PEOPLE SUPPORT`, research_support = `RESEARCH SUPPORT`) %>%
   gather(support, value, -calendar_year) %>%
   mutate(support = gsub("_support", "", support), calendar_year = as.numeric(calendar_year))
-# now save rda
+save(nhmrcFundingType, file = "data/nhmrcFundingType.rda")
 
 ## sheet = 3. EXP - GRANT TYPE
 nhmrcGrantType <- summary_tables_2000_2015 %>%
@@ -36,7 +36,7 @@ nhmrcGrantType <- summary_tables_2000_2015 %>%
   gather(year, value, -main_funding_group, -lower_grant_type) %>%
   mutate(year = as.integer(year)) %>%
   select(year, everything())
-# now save rda
+save(nhmrcGrantType, file = "data/nhmrcGrantType.rda")
 
 ## sheet = 4. EXP - GRANT SUB TYPE
 nhmrcGrantSubtype <- summary_tables_2000_2015 %>%
@@ -49,7 +49,7 @@ nhmrcGrantSubtype <- summary_tables_2000_2015 %>%
   mutate(year = as.integer(year)) %>%
   filter(!grepl("Total$", lower_grant_type), !grepl("Total$", grant_sub_type)) %>%
   select(year, everything())
-# now save rda
+save(nhmrcGrantSubtype, file = "data/nhmrcGrantSubtype.rda")
 
 ## sheet = 5. EXP - STATE & TERRITORY
 nhmrcRegion <- summary_tables_2000_2015 %>%
@@ -59,7 +59,7 @@ nhmrcRegion <- summary_tables_2000_2015 %>%
   rename(calendar_year = `CALENDAR YR`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
   gather(state, value, -calendar_year)
-# now save rda
+save(nhmrcRegion, file = "data/nhmrcRegion.rda")
 
 ## sheet = 6. EXP - SECTOR
 nhmrcSector <- summary_tables_2000_2015 %>%
@@ -70,7 +70,7 @@ nhmrcSector <- summary_tables_2000_2015 %>%
   rename(calendar_year = `CALENDAR YR`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
   gather(sector, value, -calendar_year)
-# now save rda
+save(nhmrcSector, file = "data/nhmrcSector.rda")
 
 ## sheet = 7. EXP - BRA
 nhmrcBRA <- summary_tables_2000_2015 %>%
@@ -82,7 +82,7 @@ nhmrcBRA <- summary_tables_2000_2015 %>%
          health_services_research = `HEALTH SERVICES RESEARCH`, not_applicable = `NOT APPLICABLE`, public_health = `PUBLIC HEALTH`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
   gather(basic_research_area, value, -calendar_year)
-# now save rda
+save(nhmrcBRA, file = "data/nhmrcBRA.rda")
 
 ## sheet = 8. EXP - ADMIN INST
 nhmrcInstitute <- summary_tables_2000_2015 %>%
@@ -94,7 +94,7 @@ nhmrcInstitute <- summary_tables_2000_2015 %>%
   mutate(year = as.integer(year)) %>%
   rename(administering_institution = `ADMINISTERING INSTITUTION`) %>%
   select(year, everything())
-# now save rda
+save(nhmrcInstitute, file = "data/nhmrcInstitute.rda")
 
 
 # all_grants_2000_-_2015.xlsx
@@ -111,7 +111,7 @@ nhmrcAllGrants <- all_grants_2000_2015_xls %>%
          field_of_research = `FIELD OF RESEARCH`, keywords = KEYWORDS, media_summary = `MEDIA SUMMARY`, achievements = ACHIEVEMENTS,
          expected_future_outcomes = `EXPECTED FUTURE OUTCOMES`) %>%
   mutate(application_year = as.integer(application_year), start_year = as.integer(start_year), end_year = as.integer(end_year))
-# now save rda
+save(nhmrcAllGrants, file = "data/nhmrcAllGrants.rda")
 
 # grant_approvals_15-2-17.xlsx
 ## sheet = All
@@ -123,7 +123,7 @@ nhmrcApprovals <- grant_approvals_15217_xls %>%
          grant_term_months = `GRANT TERM MONTHS`, grant_funding_location = `GRANT FUNDING LOCATION`, postcode = POSTCODE) %>%
   mutate(postcode = as.integer(postcode)) %>%
   remove_empty_rows()
-# now save rda
+save(nhmrcApprovals, file = "data/nhmrcApprovals.rda")
 
 
 # PDF files 2012-2015
@@ -139,7 +139,7 @@ nhmrcOutcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_
   gather(stage, value, -year, -scheme, -category) %>%
   separate(stage, into = c("gender", "stage"), sep = "_") %>%
   mutate(category = gsub("\\*\\*", "", category))
-# now save rda
+save(nhmrcOutcomesGenderScheme, file = "data/nhmrcOutcomesGenderScheme.rda")
 
 ## additional files for 2013-2015
 
@@ -153,7 +153,7 @@ nhmrcOutcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category) %>%
   separate(stage, into = c("gender", "stage"), sep = "_")
-# now save rda
+save(nhmrcOutcomesGenderBRA, file = "data/nhmrcOutcomesGenderBRA.rda")
 
 ## part time fellowship outcomes by gender
 ### 2013 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_3_women_in_science_140218.pdf
@@ -164,7 +164,7 @@ nhmrcOutcomesGenderPartTime <- list.files("data-raw/", pattern = "outcomes_gende
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category, -gender)
-# now save rda
+save(nhmrcOutcomesGenderPartTime, file = "data/nhmrcOutcomesGenderPartTime.rda")
 
 ## gender outcomes for practitioner, research and career development fellows by level
 ### 2013 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_4_women_in_science_140219.pdf
@@ -175,4 +175,4 @@ nhmrcOutcomesGenderFellows <- list.files("data-raw/", pattern = "outcomes_gender
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -level, -gender)
-# now save rda
+save(nhmrcOutcomesGenderFellows, file = "data/nhmrcOutcomesGenderFellows.rda")
