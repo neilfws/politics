@@ -2,12 +2,13 @@ library(readxl)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(janitor)
 
 # 2._summary_tables_2000_-_2015.xlsx
 summary_tables_2000_2015 <- "data-raw/excel/2._summary_tables_2000_-_2015.xlsx"
 
 ## sheet = 1. EXPENDITURE
-summary_tables_2000_2015_sheet1 <- summary_tables_2000_2015 %>%
+nhmrcExpenditure <- summary_tables_2000_2015 %>%
   read_excel(sheet = "1. EXPENDITURE", skip = 5) %>%
   remove_empty_cols() %>%
   slice(1:16) %>%
@@ -16,7 +17,7 @@ summary_tables_2000_2015_sheet1 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 2. EXP - MAIN FUNDING TYPE
-summary_tables_2000_2015_sheet2 <- summary_tables_2000_2015 %>%
+nhmrcFundingType <- summary_tables_2000_2015 %>%
   read_excel(sheet = "2. EXP - MAIN FUNDING TYPE", skip = 4) %>%
   remove_empty_cols() %>%
   slice(1:16) %>%
@@ -26,7 +27,7 @@ summary_tables_2000_2015_sheet2 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 3. EXP - GRANT TYPE
-summary_tables_2000_2015_sheet3 <- summary_tables_2000_2015 %>%
+nhmrcGrantType <- summary_tables_2000_2015 %>%
   read_excel(sheet = "3. EXP - GRANT TYPE", skip = 3) %>%
   slice(1:23) %>%
   select(1:18) %>%
@@ -38,7 +39,7 @@ summary_tables_2000_2015_sheet3 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 4. EXP - GRANT SUB TYPE
-summary_tables_2000_2015_sheet4 <- summary_tables_2000_2015 %>%
+nhmrcGrantSubtype <- summary_tables_2000_2015 %>%
   read_excel(sheet = "4. EXP - GRANT SUB TYPE ", skip = 3) %>%
   slice(1:171) %>%
   select(1:19) %>%
@@ -51,7 +52,7 @@ summary_tables_2000_2015_sheet4 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 5. EXP - STATE & TERRITORY
-summary_tables_2000_2015_sheet5 <- summary_tables_2000_2015 %>%
+nhmrcRegion <- summary_tables_2000_2015 %>%
   read_excel(sheet = "5. EXP - STATE & TERRITORY", skip = 3) %>%
   slice(1:16) %>%
   select(1:9) %>%
@@ -61,7 +62,7 @@ summary_tables_2000_2015_sheet5 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 6. EXP - SECTOR
-summary_tables_2000_2015_sheet6 <- summary_tables_2000_2015 %>%
+nhmrcSector <- summary_tables_2000_2015 %>%
   read_excel(sheet = "6. EXP - SECTOR", skip = 3) %>%
   remove_empty_cols() %>%
   slice(1:16) %>%
@@ -72,7 +73,7 @@ summary_tables_2000_2015_sheet6 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 7. EXP - BRA
-summary_tables_2000_2015_sheet7 <- summary_tables_2000_2015 %>%
+nhmrcBRA <- summary_tables_2000_2015 %>%
   read_excel(sheet = "7. EXP - BRA", skip = 3) %>%
   remove_empty_cols() %>%
   select(2:7) %>%
@@ -84,7 +85,7 @@ summary_tables_2000_2015_sheet7 <- summary_tables_2000_2015 %>%
 # now save rda
 
 ## sheet = 8. EXP - ADMIN INST
-summary_tables_2000_2015_sheet8 <- summary_tables_2000_2015 %>%
+nhmrcInstitute <- summary_tables_2000_2015 %>%
   read_excel(sheet = "8. EXP - ADMIN INST", skip = 3) %>%
   remove_empty_cols() %>%
   slice(1:155) %>%
@@ -99,7 +100,7 @@ summary_tables_2000_2015_sheet8 <- summary_tables_2000_2015 %>%
 # all_grants_2000_-_2015.xlsx
 ## sheet = 2000 TO 2015 DATA
 all_grants_2000_2015_xls <- "data-raw/excel/all_grants_2000_-_2015.xlsx"
-all_grants_2000_2015 <- all_grants_2000_2015_xls %>%
+nhmrcAllGrants <- all_grants_2000_2015_xls %>%
   read_excel(sheet = "2000 TO 2015 DATA", skip = 2) %>%
   remove_empty_cols() %>%
   remove_empty_rows() %>%
@@ -115,7 +116,7 @@ all_grants_2000_2015 <- all_grants_2000_2015_xls %>%
 # grant_approvals_15-2-17.xlsx
 ## sheet = All
 grant_approvals_15217_xls <- "data-raw/excel/grant_approvals_15-2-17.xlsx"
-grant_approvals_15_2_17 <- grant_approvals_15217_xls %>%
+nhmrcApprovals <- grant_approvals_15217_xls %>%
   read_excel() %>%
   rename(grant_id = `GRANT ID`, portfolio = PORTFOLIO, agency = AGENCY, program_sub_title = `PROGRAM SUB TITLE`, recipient_rao = `RECIPIENT RAO`,
          purpose = PURPOSE, recipient_institution = `RECIPIENT INSTITUTION`, value = VALUE, approval_date = `APPROVAL DATE`,
@@ -132,7 +133,7 @@ grant_approvals_15_2_17 <- grant_approvals_15217_xls %>%
 ## 2014 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_1_funding_outcomes_by_gender_scheme_141205.pdf
 ## 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/webchange_wihs_2015_outcomes_by_gender_table_1.pdf
 
-outcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_scheme*", full.names = TRUE) %>%
+nhmrcOutcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_scheme*", full.names = TRUE) %>%
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category) %>%
@@ -147,7 +148,7 @@ outcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_schem
 ### 2014 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_2_bra_data_scheme_by_gender_141205.pdf
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/webchange_wihs_2015_outcomes_by_gender_table_2.pdf
 
-outcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra*", full.names = TRUE) %>%
+nhmrcOutcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra*", full.names = TRUE) %>%
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category) %>%
@@ -159,7 +160,7 @@ outcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra*", f
 ### 2014 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_3_part_time_fellowship_outcomes_gender_141205.pdf
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/webchange_wihs_2015_outcomes_by_gender_table_3_0.pdf
 
-outcomesGenderPartTime <- list.files("data-raw/", pattern = "outcomes_gender_part-time*", full.names = TRUE) %>%
+nhmrcOutcomesGenderPartTime <- list.files("data-raw/", pattern = "outcomes_gender_part-time*", full.names = TRUE) %>%
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category, -gender)
@@ -170,7 +171,7 @@ outcomesGenderPartTime <- list.files("data-raw/", pattern = "outcomes_gender_par
 ### 2014 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_4_gender_outcomes_prac_research_cdf_fellows_level_141205.pdf
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/your_health/may_2016_update_table_4_2015_gender_outcomes_for_prac_research_and_cdf_by_level.pdf
 
-outcomesGenderFellows <- list.files("data-raw/", pattern = "outcomes_gender_fellows*", full.names = TRUE) %>%
+nhmrcOutcomesGenderFellows <- list.files("data-raw/", pattern = "outcomes_gender_fellows*", full.names = TRUE) %>%
   lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -level, -gender)
