@@ -122,7 +122,7 @@ grant_approvals_15_2_17 <- grant_approvals_15217_xls %>%
          grant_term_months = `GRANT TERM MONTHS`, grant_funding_location = `GRANT FUNDING LOCATION`, postcode = POSTCODE) %>%
   mutate(postcode = as.integer(postcode)) %>%
   remove_empty_rows()
-# now save rda + csv
+# now save rda
 
 
 # PDF files 2012-2015
@@ -138,7 +138,7 @@ outcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_schem
   gather(stage, value, -year, -scheme, -category) %>%
   separate(stage, into = c("gender", "stage"), sep = "_") %>%
   mutate(category = gsub("\\*\\*", "", category))
-# now save rda + csv
+# now save rda
 
 ## additional files for 2013-2015
 
@@ -148,11 +148,11 @@ outcomesGenderScheme <- list.files("data-raw/", pattern = "outcomes_gender_schem
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/webchange_wihs_2015_outcomes_by_gender_table_2.pdf
 
 outcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra*", full.names = TRUE) %>%
-  lapply(files, read_csv) %>%
+  lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category) %>%
   separate(stage, into = c("gender", "stage"), sep = "_")
-# now save rda + csv
+# now save rda
 
 ## part time fellowship outcomes by gender
 ### 2013 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_3_women_in_science_140218.pdf
@@ -160,18 +160,18 @@ outcomesGenderBRA <- list.files("data-raw/", pattern = "outcomes_gender_bra*", f
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/webchange_wihs_2015_outcomes_by_gender_table_3_0.pdf
 
 outcomesGenderPartTime <- list.files("data-raw/", pattern = "outcomes_gender_part-time*", full.names = TRUE) %>%
-  lapply(files, read_csv) %>%
+  lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -category, -gender)
-# now save rda + csv
+# now save rda
 
 ## gender outcomes for practitioner, research and career development fellows by level
 ### 2013 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_4_women_in_science_140219.pdf
 ### 2014 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/table_4_gender_outcomes_prac_research_cdf_fellows_level_141205.pdf
 ### 2015 https://www.nhmrc.gov.au/_files_nhmrc/file/your_health/may_2016_update_table_4_2015_gender_outcomes_for_prac_research_and_cdf_by_level.pdf
 
-files <- list.files("data-raw/", pattern = "outcomes_gender_fellows*", full.names = TRUE)
-outcomesGenderFellows <- lapply(files, read_csv) %>%
+outcomesGenderFellows <- list.files("data-raw/", pattern = "outcomes_gender_fellows*", full.names = TRUE) %>%
+  lapply(read_csv) %>%
   bind_rows() %>%
   gather(stage, value, -year, -scheme, -level, -gender)
-# now save rda + csv
+# now save rda
