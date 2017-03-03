@@ -23,4 +23,3 @@ Summary of total expenditure and active grants by year.
   nhmrcExpenditure
 }
 \keyword{datasets}
-
