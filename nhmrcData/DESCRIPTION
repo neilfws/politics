@@ -9,5 +9,10 @@ Description: Provides NHMRC funding outcome data as tidy R data
 License: License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: ggplot2, dplyr, knitr, rmarkdown
+Suggests:
+    ggplot2,
+    dplyr,
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
