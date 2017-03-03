@@ -113,10 +113,10 @@ nhmrcAllGrants <- all_grants_2000_2015_xls %>%
   mutate(application_year = as.integer(application_year), start_year = as.integer(start_year), end_year = as.integer(end_year))
 save(nhmrcAllGrants, file = "data/nhmrcAllGrants.rda")
 
-# grant_approvals_15-2-17.xlsx
+# grant_approvals_27-2-17.xlsx
 ## sheet = All
-grant_approvals_15217_xls <- "data-raw/excel/grant_approvals_15-2-17.xlsx"
-nhmrcApprovals <- grant_approvals_15217_xls %>%
+grant_approvals_27217_xls <- "data-raw/excel/grant_approvals_27-2-17.xlsx"
+nhmrcApprovals <- grant_approvals_27217_xls %>%
   read_excel() %>%
   rename(grant_id = `GRANT ID`, portfolio = PORTFOLIO, agency = AGENCY, program_sub_title = `PROGRAM SUB TITLE`, recipient_rao = `RECIPIENT RAO`,
          purpose = PURPOSE, recipient_institution = `RECIPIENT INSTITUTION`, value = VALUE, approval_date = `APPROVAL DATE`,
