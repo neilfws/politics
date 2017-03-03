@@ -3,7 +3,7 @@ Type: Package
 Title: NHMRC Funding Data Made Tidy
 Version: 0.1.0
 Author: Neil Saunders
-Maintainer: Neil Saunders <@neilfws>
+Maintainer: Neil Saunders <neilfws@gmail.com>
 Description: Provides NHMRC funding outcome data as tidy R data
     instead of PDFs and XLSXs.
 License: What license is it under?
