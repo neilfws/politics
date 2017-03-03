@@ -11,4 +11,26 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Introduction
+# Introduction
+
+# Usage examples
+
+## All Grants
+### nhmrcAllGrants
+### nhmrcApprovals
+
+## Summary tables
+### nhmrcBRA
+### nhmrcExpenditure
+### nhmrcFundingType
+### nhmrcGrantSubtype
+### nhmrcGrantType
+### nhmrcInstitute
+### nhmrcRegion
+### nhmrcSector
+
+## Outcomes by gender
+### nhmrcOutcomesGenderBRA
+### nhmrcOutcomesGenderFellows
+### nhmrcOutcomesGenderPartTime
+### nhmrcOutcomesGenderScheme
