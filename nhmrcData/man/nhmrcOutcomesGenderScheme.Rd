@@ -29,6 +29,6 @@ nhmrcOutcomesGenderScheme
 NHMRC funding outcomes by gender for each scheme.
 }
 \examples{
-  nhmrcOutcomesGenderScheme
+  nhmrcOutcomesGenderScheme \%>\% glimpse()
 }
 \keyword{datasets}

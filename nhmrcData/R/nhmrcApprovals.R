@@ -19,6 +19,6 @@
 #' \item{postcode}{Postcode}
 #' }
 #' @examples
-#'   nhmrcApprovals
+#'   nhmrcApprovals %>% glimpse()
 "nhmrcApprovals"
 

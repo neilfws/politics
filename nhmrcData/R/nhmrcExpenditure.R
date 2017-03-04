@@ -10,5 +10,5 @@
 #' \item{active_grants}{Active grants for the calendar year}
 #' }
 #' @examples
-#'   nhmrcExpenditure
+#'   nhmrcExpenditure %>% glimpse()
 "nhmrcExpenditure"

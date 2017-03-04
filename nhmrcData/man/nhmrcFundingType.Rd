@@ -20,6 +20,6 @@ nhmrcFundingType
 Summary of expenditure by funding type and year.
 }
 \examples{
-  nhmrcFundingType
+  nhmrcFundingType \%>\% glimpse()
 }
 \keyword{datasets}

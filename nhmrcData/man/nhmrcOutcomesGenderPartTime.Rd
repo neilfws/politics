@@ -27,6 +27,6 @@ nhmrcOutcomesGenderPartTime
 NHMRC funding outcomes by gender for part-time fellowships.
 }
 \examples{
-  nhmrcOutcomesGenderPartTime
+  nhmrcOutcomesGenderPartTime \%>\% glimpse()
 }
 \keyword{datasets}

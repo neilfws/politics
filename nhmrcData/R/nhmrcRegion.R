@@ -10,5 +10,5 @@
 #' \item{value}{Expenditure for state or territory}
 #' }
 #' @examples
-#'   nhmrcRegion
+#'   nhmrcRegion %>% glimpse()
 "nhmrcRegion"

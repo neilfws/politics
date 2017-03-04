@@ -20,6 +20,6 @@ nhmrcRegion
 Summary of expenditure by state/territory and year.
 }
 \examples{
-  nhmrcRegion
+  nhmrcRegion \%>\% glimpse()
 }
 \keyword{datasets}

@@ -35,6 +35,6 @@ nhmrcAllGrants
 Summary of all grants 2000 - 2015.
 }
 \examples{
-  nhmrcAllGrants
+  nhmrcAllGrants \%>\% glimpse()
 }
 \keyword{datasets}

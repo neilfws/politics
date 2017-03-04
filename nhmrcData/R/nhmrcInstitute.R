@@ -10,5 +10,5 @@
 #' \item{value}{Expenditure for grant subtype}
 #' }
 #' @examples
-#'   nhmrcInstitute
+#'   nhmrcInstitute %>% glimpse()
 "nhmrcInstitute"

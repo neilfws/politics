@@ -27,6 +27,6 @@ nhmrcOutcomesGenderFellows
 NHMRC funding outcomes by gender for Practitioner, Research and Career Development Fellows by Level.
 }
 \examples{
-  nhmrcOutcomesGenderFellows
+  nhmrcOutcomesGenderFellows \%>\% glimpse()
 }
 \keyword{datasets}

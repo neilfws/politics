@@ -15,6 +15,6 @@
 #' \item{value}{Amount awarded}
 #' }
 #' @examples
-#'   nhmrcOutcomesGenderPartTime
+#'   nhmrcOutcomesGenderPartTime %>% glimpse()
 "nhmrcOutcomesGenderPartTime"
 

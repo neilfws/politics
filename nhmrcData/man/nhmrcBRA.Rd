@@ -20,6 +20,6 @@ nhmrcBRA
 Summary of expenditure by broad research area and year.
 }
 \examples{
-  nhmrcBRA
+  nhmrcBRA \%>\% glimpse()
 }
 \keyword{datasets}

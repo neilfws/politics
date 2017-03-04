@@ -10,5 +10,5 @@
 #' \item{value}{Expenditure for sector}
 #' }
 #' @examples
-#'   nhmrcSector
+#'   nhmrcSector %>% glimpse()
 "nhmrcSector"

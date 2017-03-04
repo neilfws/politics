@@ -25,6 +25,6 @@
 #' \item{expected_future_outcomes}{Expected future outcomes}
 #' }
 #' @examples
-#'   nhmrcAllGrants
+#'   nhmrcAllGrants %>% glimpse()
 "nhmrcAllGrants"
 

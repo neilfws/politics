@@ -10,5 +10,5 @@
 #' \item{value}{Expenditure for the BRA}
 #' }
 #' @examples
-#'   nhmrcBRA
+#'   nhmrcBRA %>% glimpse()
 "nhmrcBRA"

@@ -20,6 +20,6 @@ nhmrcSector
 Summary of expenditure by sector and year.
 }
 \examples{
-  nhmrcSector
+  nhmrcSector \%>\% glimpse()
 }
 \keyword{datasets}

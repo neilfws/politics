@@ -27,6 +27,6 @@ nhmrcOutcomesGenderBRA
 NHMRC funding outcomes by gender and broad research area for early career and career development fellows.
 }
 \examples{
-  nhmrcOutcomesGenderBRA
+  nhmrcOutcomesGenderBRA \%>\% glimpse()
 }
 \keyword{datasets}

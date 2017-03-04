@@ -20,6 +20,6 @@ nhmrcExpenditure
 Summary of total expenditure and active grants by year.
 }
 \examples{
-  nhmrcExpenditure
+  nhmrcExpenditure \%>\% glimpse()
 }
 \keyword{datasets}

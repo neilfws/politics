@@ -20,6 +20,6 @@ nhmrcInstitute
 Summary of expenditure by institution and year.
 }
 \examples{
-  nhmrcInstitute
+  nhmrcInstitute \%>\% glimpse()
 }
 \keyword{datasets}

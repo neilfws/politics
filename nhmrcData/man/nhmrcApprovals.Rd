@@ -29,6 +29,6 @@ nhmrcApprovals
 Compliance reporting of grant outcomes.
 }
 \examples{
-  nhmrcApprovals
+  nhmrcApprovals \%>\% glimpse()
 }
 \keyword{datasets}
