@@ -11,6 +11,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(dplyr)
+library(ggplot2)
+library(nhmrcData)
+
+theme_set(theme_bw())
+```
+
 # Introduction
 
 # Usage examples
@@ -21,8 +30,22 @@ vignette: >
 
 ## Summary tables
 ### nhmrcBRA
+```{r nhmrcbra-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcBRA %>%
+  ggplot(aes(calendar_year, value)) + geom_col(fill = "bisque2") + 
+  facet_wrap(~basic_research_area) + 
+  labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by broad research area", subtitle = "2000 - 2015")
+```
+
 ### nhmrcExpenditure
 ### nhmrcFundingType
+```{r nhmrcfundingtype-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcFundingType %>%
+  ggplot(aes(calendar_year, value)) + geom_col(fill = "bisque2") + 
+  facet_grid(support ~ .) + 
+  labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by funding type", subtitle = "2000 - 2015")
+```
+
 ### nhmrcGrantSubtype
 ### nhmrcGrantType
 ### nhmrcInstitute
