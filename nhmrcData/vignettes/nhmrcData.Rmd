@@ -12,48 +12,200 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.path = "figures/")
 library(dplyr)
+library(tidyr)
+library(stringr)
 library(ggplot2)
 library(nhmrcData)
+library(wordcloud)
+library(tidytext)
 
-theme_set(theme_bw())
+data("stop_words")
+theme_set(theme_light())
 ```
 
 # Introduction
+It's great when organisations make data publicly-available online. Unfortunately, they often omit the extra step of making the data usable. Tables of numbers converted to PDF format and bizarrely-formatted Excel spreadsheets abound.
+
+The `nhmrcData` package takes unusable data about funding outcomes from the website of the Australian National Medical and Health Research Council and makes it usable, in the form of tidy R data. "Tidy" means data that contains one variable per column and one observation per row. For example, rather than using columns to contain the years 2000-2015, we create a column named "year" to contain those years. This makes data manipulation and visualisation in R much easier.
+
+Currently, the package includes 14 datasets. These are derived from 3 Excel spreadsheets and 13 PDF files available at the NHMRC website. The excellent `tabulizer` package was used to extract data from the PDFs. Unfortunately it's not possible to automate the procedure in a reproducible manner, so the CSV files generated manually have been made available in the `data-raw` directory of the package.
 
 # Usage examples
+The remainder of this document illustrates some manipulations and visualisations of the datasets. The visualisations are not intended to illustrate the "best way" to do it; consider them as jumping-off points to get you started with your own ideas.
 
 ## All Grants
 ### nhmrcAllGrants
+The `nhmrcAllGrants` dataset is a grand summary of funding outcomes, described by 18 variables. We could use it, for example, to count the number of grants for a particular institution each year.
+```{r nhmrcall-plot1, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcAllGrants %>% 
+  group_by(application_year) %>% 
+  count(administering_institution) %>% 
+  filter(administering_institution == "University of Sydney") %>% 
+  ggplot(aes(application_year, n)) + geom_area(fill = "azure3") +
+    labs(x = "Year", y = "Grants", title = "NHMRC grants University of Sydney", subtitle = "1994 - 2015")
+```
+
+We could also extract the keywords for each proposal and make a wordcloud of the top 100 terms.
+```{r nhmrcall-plot2, fig.width=7, fig.height=7, fig.align='center'}
+nhmrcAllGrants %>%
+  unnest_tokens(word, keywords) %>%
+  select(word) %>%
+  anti_join(stop_words) %>%
+  filter(word != "health", word != "disease") %>%
+  count(word) %>%
+  with(wordcloud(word, n, max.words = 100, min.freq = 3, colors = brewer.pal(8, "Spectral")))
+```
+
 ### nhmrcApprovals
+The `nhmrcApprovals` dataset is derived from [a spreadsheet](https://www.nhmrc.gov.au/grants-funding/research-funding-statistics-and-data/governance-reporting) used for compliance reporting of funding outcomes. Its format is somewhat confusing compared with the other data sources, since it contains multiple grant IDs awarded to the same individual at the same time. Therefore for now, we will include only a view of the dataset and leave visualisation to those interested.
+
+```{r nhmrcapprovalsdata}
+nhmrcApprovals %>% glimpse()
+```
 
 ## Summary tables
 ### nhmrcBRA
+The `nhmrcBRA` dataset details expenditure by year and one of 4 broad research area (BRA) categories. Here's a simple line chart showing yearly expenditure by BRA. 
 ```{r nhmrcbra-plot, fig.width=7, fig.height=5, fig.align='center'}
 nhmrcBRA %>%
-  ggplot(aes(calendar_year, value)) + geom_col(fill = "bisque2") + 
-  facet_wrap(~basic_research_area) + 
-  labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by broad research area", subtitle = "2000 - 2015")
+  mutate(basic_research_area = gsub("_", " ", basic_research_area)) %>%
+  ggplot(aes(calendar_year, value)) + geom_line(color = "azure3") + 
+    facet_wrap(~basic_research_area) + 
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by broad research area", subtitle = "2000 - 2015")
 ```
 
 ### nhmrcExpenditure
+The `nhmrcExpenditure` dataset is a summary of expenditure and active grants by year. 
+```{r nhmrcexpenditure-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcExpenditure %>%
+  ggplot(aes(calendar_year, active_grants)) + geom_line(color = "azure3") + 
+  labs(x = "Year", y = "Grants", title = "NHMRC active grants", subtitle = "2000 - 2015")
+```
+
 ### nhmrcFundingType
+The `nhmrcFundingType` dataset details expenditure by year and one of 3 funding categories. Here's a simple column chart showing yearly expenditure by category. 
 ```{r nhmrcfundingtype-plot, fig.width=7, fig.height=5, fig.align='center'}
 nhmrcFundingType %>%
-  ggplot(aes(calendar_year, value)) + geom_col(fill = "bisque2") + 
+  ggplot(aes(calendar_year, value)) + geom_col(fill = "azure3") + 
   facet_grid(support ~ .) + 
   labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by funding type", subtitle = "2000 - 2015")
 ```
 
-### nhmrcGrantSubtype
 ### nhmrcGrantType
+The `nhmrcGrantType` dataset details expenditure by year, main funding group (3 categories) and lower grant type (23 categories). This chart shows funding for the 3 lower grant types under the infrastructure support category.
+```{r nhmrcgranttype-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcGrantType %>% 
+  filter(main_funding_group == "INFRASTRUCTURE SUPPORT") %>% 
+  mutate(lower_grant_type = str_wrap(lower_grant_type, 20)) %>%
+  ggplot(aes(year, value)) + geom_col(fill = "azure3", position = "dodge") + 
+    facet_grid(lower_grant_type ~ .) + 
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC infrastructure support funding by grant type", subtitle = "2000 - 2015")
+```
+
+### nhmrcGrantSubtype
+Grant categories are further subdivided into 149 grant subtypes in the `nhmrcGrantSubtype` dataset.
 ### nhmrcInstitute
-### nhmrcRegion
+The `nhmrcInstitute` dataset details expenditure by year and administering institution. This dataset is probably most useful for examining institutes over time or comparing small numbers of institutes.
+```{r nhmrcinstitute-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcInstitute %>% 
+  filter(administering_institution == "Alfred Hospital") %>% 
+  ggplot(aes(year, value)) + geom_area(fill = "azure3") + 
+    scale_x_continuous(limits = c(2000, 2015))+ 
+    labs(title = "NHMRC funding by year", subtitle = "Alfred Hospital", x = "Year", y = "Value (AUD)")
+```
+
 ### nhmrcSector
+The `nhmrcSector` dataset summarises funding by one of five sectors. To make the values visible in the same chart, we have to allow different ranges on the y-axis. This indicates trends but means the charts are not directly comparable.
+```{r nhmrcsector-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcSector %>% 
+  # hack to make facet labels fit
+  mutate(sector = tolower(sector)) %>%
+  ggplot(aes(calendar_year, value)) + geom_line(color = "azure3") + 
+    facet_grid(sector ~ ., scales = "free") +
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by sector", subtitle = "2000 - 2015 (note: y-axis scales differ)")
+```
 
 ## Outcomes by gender
+The NHMRC website makes available since 2012 data pertaining to funding outcomes and gender, as part of the Women in Health Science program. These reports are published as PDFs, from which data has to be extracted manually, cleaned and saved as CSV files before processing.
+
 ### nhmrcOutcomesGenderBRA
+The `nhmrcOutcomesGenderBRA` dataset summarises funding outcomes by fellowship scheme, broad research area and gender. The original data included success rates expressed as percentages, but several of these were found to be incorrect. The dataset therefore contains two types of value: number applied and number funded. Since the second is a subset of the first, it's necessary to convert back to wide format and subtract funded from applied if we want to work with proportions or percentages.
+
+In the following example, we show the number of funded and unfunded applications by gender and fellowship scheme.
+```{r nhmrcgenderbra-plot, fig.width=7, fig.height=6, fig.align='center'}
+nhmrcOutcomesGenderBRA %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded, scheme = gsub(" Fellowships", "", scheme)) %>% 
+  gather(stage, value, -gender, -category, -scheme, -year) %>% 
+  filter(stage != "applied") %>% 
+  arrange(desc(stage)) %>%
+  mutate(stage = factor(stage, unique(stage)),
+         scheme = factor(scheme, c("Early Career", "Career Development")),
+         category = str_wrap(category, 20)) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage)) + 
+    facet_grid(category ~ scheme + gender, scales = "free") + 
+    scale_x_continuous(breaks = seq(2013, 2015, 1)) + 
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + 
+    labs(x = "Year", y = "Applications", title = "NHMRC fellowship outcomes by gender and scheme", 
+         subtitle = "2013 - 2015") + 
+    theme(axis.text.x = element_text(angle = 45))
+
+```
+
 ### nhmrcOutcomesGenderFellows
+The `nhmrcOutcomesGenderFellows` dataset also summarises outcomes by fellowship scheme, but subdivided further into levels. This time, we'll use variable y-axis scales.
+```{r outcomesgenderfellows-plot, fig.width=7, fig.height=8, fig.align='center'}
+nhmrcOutcomesGenderFellows %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded, scheme = str_wrap(scheme, 14)) %>% 
+  gather(stage, value, -gender, -level, -scheme, -year) %>% 
+  filter(stage != "applied") %>% 
+  arrange(desc(stage)) %>% 
+  mutate(stage = factor(stage, unique(stage))) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage)) + 
+    facet_grid(scheme + level ~ gender, scales = "free") + 
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + 
+    scale_x_continuous(breaks = seq(2013, 2015, 1)) +
+    labs(title = "NHMRC fellowship outcomes by gender and level", subtitle = "2013 - 2015", x = "Year", y = "Applications")
+```
+
 ### nhmrcOutcomesGenderPartTime
+The `nhmrcOutcomesGenderFellows` dataset is another summary by fellowship scheme, this time focused on part-time applications. Here, we try to visualise total applications 2013 - 2015 and compare outcomes by gender in the style of a "population pyramid" chart.
+```{r outcomesgenderpt-plot, fig.width=7, fig.height=5, fig.align='center'}
+n1 <- nhmrcOutcomesGenderPartTime %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded, scheme = gsub(" Fellowships", "", scheme)) %>% 
+  gather(stage, value, -gender, -category, -scheme, -year) %>% 
+  filter(stage != "applied") %>% 
+  arrange(desc(stage)) %>% 
+  mutate(stage = factor(stage, unique(stage))) %>% 
+  mutate(value = ifelse(gender == "women", 0 - value, value)) %>% 
+  mutate(scheme = factor(scheme, levels = c("Early Career", "Career Development", "Research")))
+
+ggplot() + 
+  geom_col(data = subset(n1, gender == "women"), aes(category, value, fill = stage)) + 
+  geom_col(data = subset(n1, gender == "men"), aes(category, value, fill = stage)) + 
+  coord_flip() + scale_y_continuous(limits = c(-120, 120), breaks = seq(-120, 120, 20), labels = c(seq(120, 0, -20), seq(20, 120, 20))) + 
+  scale_fill_manual(values = c("azure3", "peachpuff2")) + 
+  geom_hline(yintercept = 0) + theme_light() + 
+  labs(x = "Broad Research Area", y = "Applications", title = "NHMRC part-time fellowship outcomes by gender & scheme", subtitle = "2013 - 2015") + 
+  facet_grid(scheme~.) + 
+  annotate("text", label = "women", x = 4, y = -100) + 
+  annotate("text", label = "men", x = 4, y = 100)
+```
+
 ### nhmrcOutcomesGenderScheme
+The `nhmrcOutcomesGenderScheme` dataset: yet another summary by fellowship scheme but this time, subdivided further into 29 categories (such as "Australian Biomedical (Peter Doherty)"). Back to the area plot of absolute values for this one.
+```{r outcomesgenderscheme-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderScheme %>% spread(stage, value) %>% 
+  mutate(unfunded = applied - funded) %>% 
+  gather(stage, value, -gender, -category, -scheme, -year) %>% 
+  filter(stage != "applied", gender != "unknown", category == "Australian Biomedical (Peter Doherty)") %>% 
+  arrange(desc(stage)) %>%
+  mutate(stage = factor(stage, unique(stage))) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage)) + facet_grid(. ~ gender) + 
+  scale_fill_manual(values = c("azure3", "peachpuff2")) + 
+  labs(title = "NHMRC Australian Biomedical (Peter Doherty) fellowship outcomes by gender", subtitle = "2012 - 2015", x = "Year", y = "Applications")
+```
