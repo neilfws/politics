@@ -10,9 +10,14 @@ License: License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests:
-    ggplot2,
-    dplyr,
     knitr,
     rmarkdown
+Imports:
+    dplyr,
+    tidyr,
+    stringr,
+    ggplot2,
+    wordcloud,
+    tidytext
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
