@@ -6,6 +6,12 @@ This package contains information about the Australian National Health & Medical
 devtools::install_github("neilfws/politics", subdir = "nhmrcData")
 ```
 
+To install the vignette, use the following. Note that the vignette requires `dplyr`, `tidyr`, `stringr`, `ggplot2`, `wordcloud` and `tidytext`.
+
+```
+devtools::install_github("neilfws/politics", subdir = "nhmrcData", build_vignettes = TRUE)
+```
+
 Then:
 
 ```
