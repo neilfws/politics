@@ -143,6 +143,18 @@ nhmrcOutcomesGenderGrants <- project_grant_funded_rate_gender_new_investigator_a
 save(nhmrcOutcomesGenderGrants, file = "data/nhmrcOutcomesGenderGrants.rda")
 
 ## sheet = FUNDED RATES
+nhmrcOutcomesGenderRates <- project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218_xlsx %>%
+  read_excel(sheet = "FUNDED RATES", col_names = FALSE, skip = 4) %>%
+  remove_empty_cols() %>%
+  filter(X0 != "Grand Total") %>%
+  mutate(year = ifelse(grepl("^C", X0), NA, X0)) %>%
+  fill(year) %>%
+  mutate(year = as.integer(year)) %>%
+  filter(!grepl("^20", X0)) %>%
+  select(year, ci = X0, women_applied = X1, women_funded = X2, men_applied = X5, men_funded = X6) %>%
+  gather(stage, value, -ci, -year) %>%
+  separate(stage, into = c("gender", "stage"), sep = "_")
+save(nhmrcOutcomesGenderRates, file = "data/nhmrcOutcomesGenderRates.rda")
 
 ## sheet = AVERAGE YEARS POST DOC
 
