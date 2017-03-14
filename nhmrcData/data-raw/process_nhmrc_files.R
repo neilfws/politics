@@ -126,6 +126,36 @@ nhmrcApprovals <- grant_approvals_27217_xls %>%
 save(nhmrcApprovals, file = "data/nhmrcApprovals.rda")
 
 
+# Outcomes by gender
+## project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218.xlsx
+project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218_xlsx <- "data-raw/excel/project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218.xlsx"
+## sheet = GRANT DATA
+nhmrcOutcomesGenderGrants <- project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218_xlsx %>%
+  read_excel(sheet = "GRANT DATA", col_names = FALSE, skip = 4) %>%
+  remove_empty_cols() %>%
+  filter(X0 != "Grand Total") %>%
+  mutate(year = ifelse(grepl("^C", X0), NA, X0)) %>%
+  fill(year) %>%
+  mutate(year = as.integer(year)) %>%
+  filter(!grepl("^20", X0)) %>%
+  select(year, ci = X0, women = X1, men = X4) %>%
+  gather(gender, value, -ci, -year)
+save(nhmrcOutcomesGenderGrants, file = "data/nhmrcOutcomesGenderGrants.rda")
+
+## sheet = FUNDED RATES
+
+## sheet = AVERAGE YEARS POST DOC
+
+## sheet = FUNDED RATES - BASIC SCIENCE
+
+## sheet = FUNDED RATES - CLIN MED & SCI
+
+## sheet = FUNDED RATES - H.S.R
+
+## sheet = FUNDED RATES - PUBLIC HEALTH
+
+## sheet = TEACHING LOAD BY GENDER
+
 # PDF files 2012-2015
 ## funding outcomes by gender for each scheme
 ## 2012 https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/wihs_table_5_140317v2.pdf
