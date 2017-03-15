@@ -166,12 +166,9 @@ nhmrcOutcomesGenderPostDoc <- project_grant_funded_rate_gender_new_investigator_
   fill(year) %>%
   mutate(year = as.integer(year)) %>%
   filter(!grepl("^20", X0)) %>%
-  select(year, ci = X0, women = X1, women_applied = X2, women_funded = X3, women_unfunded = X4,
-         men = X6, men_applied = X7, men_funded = X8, men_unfunded = X9) %>%
-  gather(stage, value, -year, -ci, -men, -women) %>%
-  separate(stage, into = c("gender", "stage"), sep = "_") %>%
-  gather(gender, profiles, -year, -ci, -stage, -value) %>%
-  select(year, ci, gender, profiles, stage, value)
+  select(year, ci = X0, women_profiles = X1, women_applied = X2, women_funded = X3, women_unfunded = X4, men_profiles = X6, men_applied = X7, men_funded = X8, men_unfunded = X9) %>%
+  gather(stage, value, -year, -ci) %>%
+  separate(stage, into = c("gender", "stage"), sep = "_")
 save(nhmrcOutcomesGenderPostDoc, file = "data/nhmrcOutcomesGenderPostDoc.rda")
 
 
