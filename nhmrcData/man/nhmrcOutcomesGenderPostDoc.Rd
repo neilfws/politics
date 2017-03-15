@@ -9,8 +9,7 @@
 \item{year}{Year}
 \item{ci}{CI group (CIA, CIB...)}
 \item{gender}{Gender}
-\item{profiles}{Number of applicant profiles}
-\item{stage}{Stage (applied, funded, unfunded)}
+\item{stage}{Stage (applied, funded, unfunded or profiles) - profiles = number of applicants}
 \item{value}{Average years postdoc for stage}
 }}
 \source{
