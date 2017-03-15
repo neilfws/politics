@@ -2,6 +2,7 @@ library(readxl)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(stringr)
 library(janitor)
 
 # 2._summary_tables_2000_-_2015.xlsx
@@ -232,6 +233,26 @@ nhmrcOutcomesGenderRatesPH <- project_grant_funded_rate_gender_new_investigator_
 save(nhmrcOutcomesGenderRatesPH, file = "data/nhmrcOutcomesGenderRatesPH.rda")
 
 ## sheet = TEACHING LOAD BY GENDER
+nhmrcOutcomesGenderTeaching <- project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218_xlsx %>%
+  read_excel(sheet = "TEACHING LOAD BY GENDER", col_names = FALSE, skip = 3)
+women <- nhmrcOutcomesGenderTeaching[11:22, 1:4]
+women$gender <- "women"
+men   <- nhmrcOutcomesGenderTeaching[37:48, 1:4]
+men$gender <- "men"
+nhmrcOutcomesGenderTeaching <- rbind(women, men)
+nhmrcOutcomesGenderTeaching <- nhmrcOutcomesGenderTeaching %>%
+  filter(!is.na(X0), X0 != "Total") %>%
+  rename(teaching = X0, `2010` = X1, `2011` = X2, `2012` = X3) %>%
+  mutate(stage = str_match(teaching, "^(.*Funded)$")[, 2]) %>%
+  fill(stage) %>%
+  filter(!grepl("Funded", teaching)) %>%
+  gather(year, value, -stage, -gender, -teaching) %>%
+  mutate(teaching = gsub("^High$", "High -> 10", teaching)) %>%
+  mutate(teaching = gsub("^Medium$", "Medium 6-10", teaching)) %>%
+  mutate(teaching = gsub("^Small$", "Small -<5", teaching)) %>%
+  select(year, gender, teaching, stage, value)
+save(nhmrcOutcomesGenderTeaching, file = "data/nhmrcOutcomesGenderTeaching.rda")
+
 
 # PDF files 2012-2015
 ## funding outcomes by gender for each scheme
