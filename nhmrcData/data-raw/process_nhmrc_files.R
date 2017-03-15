@@ -231,6 +231,7 @@ nhmrcOutcomesGenderRatesPH <- project_grant_funded_rate_gender_new_investigator_
   filter(!grepl("^20", X0)) %>%
   select(year, ci = X0, women_applied = X1, women_funded = X2, men_applied = X5, men_funded = X6) %>%
   gather(stage, value, -ci, -year) %>%
+  mutate(value = as.numeric(value)) %>%
   separate(stage, into = c("gender", "stage"), sep = "_")
 save(nhmrcOutcomesGenderRatesPH, file = "data/nhmrcOutcomesGenderRatesPH.rda")
 
