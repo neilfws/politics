@@ -247,6 +247,7 @@ nhmrcOutcomesGenderTeaching <- nhmrcOutcomesGenderTeaching %>%
   fill(stage) %>%
   filter(!grepl("Funded", teaching)) %>%
   gather(year, value, -stage, -gender, -teaching) %>%
+  mutate(year = as.numeric(year)) %>%
   mutate(teaching = gsub("^High$", "High -> 10", teaching)) %>%
   mutate(teaching = gsub("^Medium$", "Medium 6-10", teaching)) %>%
   mutate(teaching = gsub("^Small$", "Small -<5", teaching)) %>%
