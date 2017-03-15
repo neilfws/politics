@@ -35,7 +35,22 @@ The package contains the following datasets. No need to use `data(<dataset>)`; j
 * `nhmrcSector`: outcomes by sector
 
 ## Outcomes by gender
+Outcomes by gender data come from several sources. The first is a series of PDF files obtained from the NHMRC website under the [Women in Health Science](https://www.nhmrc.gov.au/research/women-health-science) section, and converted manually to data in CSV format.
+
 * `nhmrcOutcomesGenderBRA`: outcomes by gender and broad research area
 * `nhmrcOutcomesGenderFellows`: outcomes by gender and fellowship
 * `nhmrcOutcomesGenderPartTime`: outcomes by gender for part-time fellowships
 * `nhmrcOutcomesGenderScheme`: outcomes by gender and scheme
+
+The second data source is [this Excel file](https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218.xlsx). It contains 8 sheets which give rise to the following datasets, for years 2003 - 2013.
+
+The last sheet in the file contains data pertaining to teaching load. It is particularly badly-designed, which limits both its utiity and the data that can be extracted from it.
+
+* `nhmrcOutcomesGenderGrants`: project grants new investigators CI gender
+* `nhmrcOutcomesGenderRates`: project grants new investigators funded rates
+* `nhmrcOutcomesGenderPostDoc`: project grants new investigators average years postdoc at time of application
+* `nhmrcOutcomesGenderRatesBS`: project grants new investigators funding rates basic science
+* `nhmrcOutcomesGenderRatesCMS`: project grants new investigators funding rates clinical & medical science
+* `nhmrcOutcomesGenderRatesHSR`: project grants new investigators funding rates health science research
+* `nhmrcOutcomesGenderRatesPH`: project grants new investigators funding rates public health
+* `nhmrcOutcomesGenderTeaching`: project grants CIA Go8 Universities 2010 to 2012 by teaching load 	
