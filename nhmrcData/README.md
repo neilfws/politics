@@ -21,7 +21,7 @@ library(nhmrcData)
 The package contains the following datasets. No need to use `data(<dataset>)`; just type the dataset name to access its contents.
 
 ## All Grants
-* `nhmrcAllGrants`: summary of all grants 2000-2015
+* `nhmrcAllGrants`: summary of all grants 2000-2016
 * `nhmrcApprovals`: compliance reporting of grant outcomes
 
 ## Summary tables
