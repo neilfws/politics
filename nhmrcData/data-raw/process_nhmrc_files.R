@@ -5,33 +5,33 @@ library(tidyr)
 library(stringr)
 library(janitor)
 
-# 2._summary_tables_2000_-_2015.xlsx
-summary_tables_2000_2015 <- "data-raw/excel/2._summary_tables_2000_-_2015.xlsx"
+# 2._summary_tables_2000_-_2016.xlsx
+summary_tables_2000_2016 <- "data-raw/excel/2._summary_tables_2000_-_2016.xlsx"
 
 ## sheet = 1. EXPENDITURE
-nhmrcExpenditure <- summary_tables_2000_2015 %>%
+nhmrcExpenditure <- summary_tables_2000_2016 %>%
   read_excel(sheet = "1. EXPENDITURE", skip = 5) %>%
   remove_empty_cols() %>%
-  slice(1:16) %>%
+  slice(1:17) %>%
   rename(calendar_year = `CALENDAR YEAR`, total_expenditure = `TOTAL EXPENDITURE`, active_grants = `# ACTIVE GRANTS`) %>%
   mutate(calendar_year = as.numeric(calendar_year))
 save(nhmrcExpenditure, file = "data/nhmrcExpenditure.rda")
 
 ## sheet = 2. EXP - MAIN FUNDING TYPE
-nhmrcFundingType <- summary_tables_2000_2015 %>%
+nhmrcFundingType <- summary_tables_2000_2016 %>%
   read_excel(sheet = "2. EXP - MAIN FUNDING TYPE", skip = 4) %>%
   remove_empty_cols() %>%
-  slice(1:16) %>%
+  slice(1:17) %>%
   select(calendar_year = `CALENDAR YR`, infrastructure_support = `INFRASTRUCTURE SUPPORT`, people_support = `PEOPLE SUPPORT`, research_support = `RESEARCH SUPPORT`) %>%
   gather(support, value, -calendar_year) %>%
   mutate(support = gsub("_support", "", support), calendar_year = as.numeric(calendar_year))
 save(nhmrcFundingType, file = "data/nhmrcFundingType.rda")
 
 ## sheet = 3. EXP - GRANT TYPE
-nhmrcGrantType <- summary_tables_2000_2015 %>%
+nhmrcGrantType <- summary_tables_2000_2016 %>%
   read_excel(sheet = "3. EXP - GRANT TYPE", skip = 3) %>%
   slice(1:23) %>%
-  select(1:18) %>%
+  select(1:19) %>%
   rename(main_funding_group = `MAIN FUNDING GROUP`, lower_grant_type = `LOWER GRANT TYPE`) %>%
   fill(main_funding_group) %>%
   gather(year, value, -main_funding_group, -lower_grant_type) %>%
@@ -40,10 +40,11 @@ nhmrcGrantType <- summary_tables_2000_2015 %>%
 save(nhmrcGrantType, file = "data/nhmrcGrantType.rda")
 
 ## sheet = 4. EXP - GRANT SUB TYPE
-nhmrcGrantSubtype <- summary_tables_2000_2015 %>%
+nhmrcGrantSubtype <- summary_tables_2000_2016 %>%
   read_excel(sheet = "4. EXP - GRANT SUB TYPE ", skip = 3) %>%
-  slice(1:171) %>%
-  select(1:19) %>%
+  remove_empty_cols() %>%
+  slice(1:181) %>%
+  select(1:20) %>%
   rename(main_funding_group = `MAIN FUNDING GROUP`, lower_grant_type = `LOWER GRANT TYPE`, grant_sub_type = `GRANT SUB TYPE`) %>%
   fill(main_funding_group, lower_grant_type) %>%
   gather(year, value, -main_funding_group, -lower_grant_type, -grant_sub_type) %>%
@@ -53,9 +54,9 @@ nhmrcGrantSubtype <- summary_tables_2000_2015 %>%
 save(nhmrcGrantSubtype, file = "data/nhmrcGrantSubtype.rda")
 
 ## sheet = 5. EXP - STATE & TERRITORY
-nhmrcRegion <- summary_tables_2000_2015 %>%
+nhmrcRegion <- summary_tables_2000_2016 %>%
   read_excel(sheet = "5. EXP - STATE & TERRITORY", skip = 3) %>%
-  slice(1:16) %>%
+  slice(1:17) %>%
   select(1:9) %>%
   rename(calendar_year = `CALENDAR YR`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
@@ -63,10 +64,10 @@ nhmrcRegion <- summary_tables_2000_2015 %>%
 save(nhmrcRegion, file = "data/nhmrcRegion.rda")
 
 ## sheet = 6. EXP - SECTOR
-nhmrcSector <- summary_tables_2000_2015 %>%
+nhmrcSector <- summary_tables_2000_2016 %>%
   read_excel(sheet = "6. EXP - SECTOR", skip = 3) %>%
   remove_empty_cols() %>%
-  slice(1:16) %>%
+  slice(1:17) %>%
   select(1:6) %>%
   rename(calendar_year = `CALENDAR YR`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
@@ -74,11 +75,11 @@ nhmrcSector <- summary_tables_2000_2015 %>%
 save(nhmrcSector, file = "data/nhmrcSector.rda")
 
 ## sheet = 7. EXP - BRA
-nhmrcBRA <- summary_tables_2000_2015 %>%
+nhmrcBRA <- summary_tables_2000_2016 %>%
   read_excel(sheet = "7. EXP - BRA", skip = 3) %>%
   remove_empty_cols() %>%
   select(2:7) %>%
-  slice(1:16) %>%
+  slice(1:17) %>%
   rename(calendar_year = `CALENDAR YR`, basic_science = `BASIC SCIENCE`, clinical_medicine_and_science = `CLINICAL MEDICINE AND SCIENCE`,
          health_services_research = `HEALTH SERVICES RESEARCH`, not_applicable = `NOT APPLICABLE`, public_health = `PUBLIC HEALTH`) %>%
   mutate(calendar_year = as.integer(calendar_year)) %>%
@@ -86,11 +87,11 @@ nhmrcBRA <- summary_tables_2000_2015 %>%
 save(nhmrcBRA, file = "data/nhmrcBRA.rda")
 
 ## sheet = 8. EXP - ADMIN INST
-nhmrcInstitute <- summary_tables_2000_2015 %>%
+nhmrcInstitute <- summary_tables_2000_2016 %>%
   read_excel(sheet = "8. EXP - ADMIN INST", skip = 3) %>%
   remove_empty_cols() %>%
   slice(1:155) %>%
-  select(1:17) %>%
+  select(1:18) %>%
   gather(year, value, -`ADMINISTERING INSTITUTION`) %>%
   mutate(year = as.integer(year)) %>%
   rename(administering_institution = `ADMINISTERING INSTITUTION`) %>%
@@ -98,11 +99,11 @@ nhmrcInstitute <- summary_tables_2000_2015 %>%
 save(nhmrcInstitute, file = "data/nhmrcInstitute.rda")
 
 
-# all_grants_2000_-_2015.xlsx
-## sheet = 2000 TO 2015 DATA
-all_grants_2000_2015_xls <- "data-raw/excel/all_grants_2000_-_2015.xlsx"
-nhmrcAllGrants <- all_grants_2000_2015_xls %>%
-  read_excel(sheet = "2000 TO 2015 DATA", skip = 2) %>%
+# all_grants_2000_-_2016.xlsx
+## sheet = 2000 TO 2016 DATA
+all_grants_2000_2016_xls <- "data-raw/excel/1._all_grants_2000_-_2016.xlsx"
+nhmrcAllGrants <- all_grants_2000_2016_xls %>%
+  read_excel(sheet = "2000 TO 2016 DATA", skip = 2) %>%
   remove_empty_cols() %>%
   remove_empty_rows() %>%
   select(1:18) %>%
