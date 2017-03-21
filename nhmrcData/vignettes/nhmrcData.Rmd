@@ -44,7 +44,7 @@ nhmrcAllGrants %>%
   count(administering_institution) %>% 
   filter(administering_institution == "University of Sydney") %>% 
   ggplot(aes(application_year, n)) + geom_area(fill = "azure3") +
-    labs(x = "Year", y = "Grants", title = "NHMRC grants University of Sydney", subtitle = "1994 - 2015")
+    labs(x = "Year", y = "Grants", title = "NHMRC grants University of Sydney", subtitle = "1994 - 2016")
 ```
 
 We could also extract the keywords for each proposal and make a wordcloud of the top 100 terms.
@@ -73,7 +73,7 @@ nhmrcBRA %>%
   mutate(basic_research_area = gsub("_", " ", basic_research_area)) %>%
   ggplot(aes(calendar_year, value)) + geom_line(color = "azure3") + 
     facet_wrap(~basic_research_area) + 
-    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by broad research area", subtitle = "2000 - 2015")
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by broad research area", subtitle = "2000 - 2016")
 ```
 
 ### nhmrcExpenditure
@@ -81,7 +81,7 @@ The `nhmrcExpenditure` dataset is a summary of expenditure and active grants by 
 ```{r nhmrcexpenditure-plot, fig.width=7, fig.height=5, fig.align='center'}
 nhmrcExpenditure %>%
   ggplot(aes(calendar_year, active_grants)) + geom_line(color = "azure3") + 
-  labs(x = "Year", y = "Grants", title = "NHMRC active grants", subtitle = "2000 - 2015")
+  labs(x = "Year", y = "Grants", title = "NHMRC active grants", subtitle = "2000 - 2016")
 ```
 
 ### nhmrcFundingType
@@ -90,7 +90,7 @@ The `nhmrcFundingType` dataset details expenditure by year and one of 3 funding 
 nhmrcFundingType %>%
   ggplot(aes(calendar_year, value)) + geom_col(fill = "azure3") + 
   facet_grid(support ~ .) + 
-  labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by funding type", subtitle = "2000 - 2015")
+  labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by funding type", subtitle = "2000 - 2016")
 ```
 
 ### nhmrcGrantType
@@ -101,7 +101,7 @@ nhmrcGrantType %>%
   mutate(lower_grant_type = str_wrap(lower_grant_type, 20)) %>%
   ggplot(aes(year, value)) + geom_col(fill = "azure3", position = "dodge") + 
     facet_grid(lower_grant_type ~ .) + 
-    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC infrastructure support funding by grant type", subtitle = "2000 - 2015")
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC infrastructure support funding by grant type", subtitle = "2000 - 2016")
 ```
 
 ### nhmrcGrantSubtype
@@ -112,7 +112,7 @@ The `nhmrcInstitute` dataset details expenditure by year and administering insti
 nhmrcInstitute %>% 
   filter(administering_institution == "Alfred Hospital") %>% 
   ggplot(aes(year, value)) + geom_area(fill = "azure3") + 
-    scale_x_continuous(limits = c(2000, 2015))+ 
+    scale_x_continuous(limits = c(2000, 2016))+ 
     labs(title = "NHMRC funding by year", subtitle = "Alfred Hospital", x = "Year", y = "Value (AUD)")
 ```
 
@@ -124,7 +124,7 @@ nhmrcSector %>%
   mutate(sector = tolower(sector)) %>%
   ggplot(aes(calendar_year, value)) + geom_line(color = "azure3") + 
     facet_grid(sector ~ ., scales = "free") +
-    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by sector", subtitle = "2000 - 2015 (note: y-axis scales differ)")
+    labs(x = "Year", y = "Expenditure (AUD)", title = "NHMRC funding by sector", subtitle = "2000 - 2016 (note: y-axis scales differ)")
 ```
 
 ## Outcomes by gender
