@@ -30,7 +30,7 @@ It's great when organisations make data publicly-available online. Unfortunately
 
 The `nhmrcData` package takes unusable data about funding outcomes from the website of the Australian National Medical and Health Research Council and makes it usable, in the form of tidy R data. "Tidy" means data that contains one variable per column and one observation per row. For example, rather than using columns to contain the years 2000-2015, we create a column named "year" to contain those years. This makes data manipulation and visualisation in R much easier.
 
-Currently, the package includes 14 datasets. These are derived from 3 Excel spreadsheets and 13 PDF files available at the NHMRC website. The excellent `tabulizer` package was used to extract data from the PDFs. Unfortunately it's not possible to automate the procedure in a reproducible manner, so the CSV files generated manually have been made available in the `data-raw` directory of the package.
+Currently, the package includes 22 datasets. These are derived from 4 Excel spreadsheets and 13 PDF files available at the NHMRC website. The excellent `tabulizer` package was used to extract data from the PDFs. Unfortunately it's not possible to automate the procedure in a reproducible manner, so the CSV files generated manually have been made available in the `data-raw` directory of the package.
 
 # Usage examples
 The remainder of this document illustrates some manipulations and visualisations of the datasets. The visualisations are not intended to illustrate the "best way" to do it; consider them as jumping-off points to get you started with your own ideas.
@@ -128,7 +128,7 @@ nhmrcSector %>%
 ```
 
 ## Outcomes by gender
-The NHMRC website makes available since 2012 data pertaining to funding outcomes and gender, as part of the Women in Health Science program. These reports are published as PDFs, from which data has to be extracted manually, cleaned and saved as CSV files before processing.
+Outcomes by gender data comes from two sources. First, the NHMRC website makes available since 2012 data pertaining to funding outcomes and gender, as part of the Women in Health Science program. These reports are published as PDFs, from which data has to be extracted manually, cleaned and saved as CSV files before processing.
 
 ### nhmrcOutcomesGenderBRA
 The `nhmrcOutcomesGenderBRA` dataset summarises funding outcomes by fellowship scheme, broad research area and gender. The original data included success rates expressed as percentages, but several of these were found to be incorrect. The dataset therefore contains two types of value: number applied and number funded. Since the second is a subset of the first, it's necessary to convert back to wide format and subtract funded from applied if we want to work with proportions or percentages.
@@ -208,4 +208,95 @@ nhmrcOutcomesGenderScheme %>% spread(stage, value) %>%
   ggplot(aes(year, value)) + geom_area(aes(fill = stage)) + facet_grid(. ~ gender) + 
   scale_fill_manual(values = c("azure3", "peachpuff2")) + 
   labs(title = "NHMRC Australian Biomedical (Peter Doherty) fellowship outcomes by gender", subtitle = "2012 - 2015", x = "Year", y = "Applications")
+```
+
+The second source of outcomes by gender data is [this Excel file](https://www.nhmrc.gov.au/_files_nhmrc/file/research/women_in_science/project_grant_funded_rate_gender_new_investigator_and_teaching_load_140218.xlsx). It contains 8 sheets which give rise to the following datasets.
+
+### nhmrcOutcomesGenderGrants
+The `nhmrcOutcomesGenderGrants` dataset summarises awarded grants by year, CI level and gender. We could look at the proportion of CIAs awarded grants by gender.
+```{r outcomesgendergrants-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderGrants %>% 
+  filter(ci == "CIA") %>% 
+  ggplot(aes(year, value)) + geom_col(aes(fill = gender), position = "fill") + 
+    scale_fill_manual(values = c("skyblue3", "darkorange")) + 
+    geom_hline(yintercept = 0.5, linetype = "dashed") + 
+    labs(x = "Year", y = "Proportion", title = "Proportion of NHMRC project grant CIAs by gender", subtitle = "2003 - 2013") 
+```
+
+### nhmrcOutcomesGenderRates
+The `nhmrcOutcomesGenderRates` dataset summarises success rates by year, CI level and gender. We can use it to look at the proportion of funded grants by CIA gender.
+
+```{r outcomesgenderrates-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderRates %>% 
+  filter(ci == "CIA")  %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded) %>% 
+  gather(stage, value, -gender, -ci, -year) %>% 
+  filter(stage != "applied") %>% 
+  mutate(stage = factor(stage, levels = c("unfunded", "funded"))) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage), position = "fill") + 
+    facet_grid(. ~ gender) + scale_x_continuous(breaks = seq(2003, 2013, 2)) + 
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + labs(x = "Year", y = "Proportion", title = "Proportion of funded NHMRC project grants by CIA gender", subtitle = "2003 - 2013")
+```
+
+### nhmrcOutcomesGenderPostDoc
+The `nhmrcOutcomesGenderPostDoc` dataset contains information about the average time spent at postdoctoral level for grant awardees by year, CI level and gender.
+
+### nhmrcOutcomesGenderRatesBS
+The `nhmrcOutcomesGenderGrantsBS` dataset summarises success rate for Basic Science grants by year, CI level and gender. Rates for CIAs can be plotted as before.
+```{r outcomesgenderratesbs-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderRatesBS %>% 
+  filter(ci == "CIA")  %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded) %>% 
+  gather(stage, value, -gender, -ci, -year) %>% 
+  filter(stage != "applied") %>% 
+  mutate(stage = factor(stage, levels = c("unfunded", "funded"))) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage), position = "fill") + 
+    facet_grid(. ~ gender) + scale_x_continuous(breaks = seq(2003, 2013, 2)) + 
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + labs(x = "Year", y = "Proportion", title = "Proportion of funded NHMRC project grants by CIA gender", subtitle = "Basic Science 2003 - 2013")
+```
+
+### nhmrcOutcomesGenderRatesCMS
+The `nhmrcOutcomesGenderGrantsCMS` dataset summarises success rate for Clinical and Medical Science grants by year, CI level and gender. Rates for CIAs can be plotted as before.
+```{r outcomesgenderratescms-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderRatesCMS %>% 
+  filter(ci == "CIA")  %>% 
+  spread(stage, value) %>% 
+  mutate(unfunded = applied - funded) %>% 
+  gather(stage, value, -gender, -ci, -year) %>% 
+  filter(stage != "applied") %>% 
+  mutate(stage = factor(stage, levels = c("unfunded", "funded"))) %>% 
+  ggplot(aes(year, value)) + geom_area(aes(fill = stage), position = "fill") + 
+    facet_grid(. ~ gender) + scale_x_continuous(breaks = seq(2003, 2013, 2)) + 
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + labs(x = "Year", y = "Proportion", title = "Proportion of funded NHMRC project grants by CIA gender", subtitle = "Clinical Medicine & Science 2003 - 2013")
+```
+
+### nhmrcOutcomesGenderRatesHSR
+The `nhmrcOutcomesGenderGrantsHSR` dataset summarises success rate for Health Science Research grants by year, CI level and gender. The numbers in this dataset are rather low, so will not be investigated further here.
+```{r outcomesgenderrateshsr-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderRatesHSR %>%
+  glimpse()
+```
+
+### nhmrcOutcomesGenderRatesPH
+The `nhmrcOutcomesGenderGrantsPH` dataset summarises success rate for Public Health grants by year, CI level and gender. Absolute numbers are again rather low in this dataset, so in this example we plot funded grants by gender and CI level.
+```{r outcomesgenderratesph-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderRatesPH %>% 
+  filter(stage == "funded") %>% 
+  ggplot(aes(year, value)) + geom_col(aes(fill = gender)) + facet_grid(ci ~ gender) +
+    scale_fill_manual(values = c("skyblue3", "darkorange")) + 
+    labs(x = "Year", y = "Funded", title = "Funded NHMRC project grants by gender and CI", subtitle = "Public Health 2003 - 2013") +
+    guides(fill = FALSE)
+```
+
+### nhmrcOutcomesGenderTeaching
+The `nhmrcOutcomesGenderTeaching` dataset summarises project grant success rate for CIAs in Go8 universities by year, gender and teaching load. In current form the data is not especially useful, but we can plot the data and note that less teaching (but not no teaching) means more time for writing applications.
+```{r outcomesgenderteaching-plot, fig.width=7, fig.height=5, fig.align='center'}
+nhmrcOutcomesGenderTeaching %>% 
+  mutate(teaching = factor(teaching, c("High -> 10", "Medium 6-10", "Small -<5", "No Teaching")), stage = factor(stage, c("Not Funded", "Funded"))) %>% 
+  ggplot(aes(year, value)) + geom_col(aes(fill = stage)) + facet_grid(teaching ~ gender) +
+    scale_fill_manual(values = c("azure3", "peachpuff2")) + 
+    scale_x_continuous(breaks = seq(2010, 2012, 1)) + 
+    labs(x = "Year", y = "Grants", title = "NHMRC project grant funding by CIA gender and teaching load", subtitle = "Go8 universities 2010-2012")
 ```
