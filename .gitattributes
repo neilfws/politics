@@ -1,3 +1,4 @@
+*.Rmd linguist-language=R
 USVotes/output/* linguist-documentation
 nhmrcData/vignettes/*.html linguist-documentation
-AusVotesSSM/code/R/*.html linguist-documentation
+AusVoteSSM/code/R/*.html linguist-documentation
