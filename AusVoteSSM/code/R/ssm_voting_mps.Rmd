@@ -1,0 +1,75 @@
+---
+title: "Same Sex Marriage Voting Intention of NSW MPs"
+author: "Neil Saunders"
+date: "compiled `r Sys.time()`"
+output:
+  html_document:
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rvest)
+library(rgdal)
+library(leaflet)
+```
+
+# Introduction
+This document shows how data can be added to a map using the R [leaflet package](https://rstudio.github.io/leaflet/). In this example we obtain from an online news article data describing the voting intentions of Australian politicians with regard to same sex marriage law and map that onto a map of New South Wales.
+
+# Data
+## NSW electorates
+The map of NSW electorates is obtained as a shapefile [from the Australian ELectoral Commission](http://www.aec.gov.au/Electorates/gis/gis_datadownload.htm).
+
+```{r nsw-map}
+nsw <- readOGR("../../data//nsw-esri-06042016", "NSW_electoral_boundaries_25-02-2016")
+```
+
+## Voting intention
+Voting intentions of MPs are obtained from a HTML table in [this ABC News article](http://www.abc.net.au/news/2017-11-14/same-sex-marriage-if-the-survey-says-yes-how-will-your-mp-vote/9104112).
+
+```{r mp-votes}
+abc <- read_html("http://www.abc.net.au/news/2017-11-14/same-sex-marriage-if-the-survey-says-yes-how-will-your-mp-vote/9104112")
+
+ssm_votes_mp <- abc %>% 
+  html_nodes("table") %>% 
+  .[[1]] %>% 
+  html_table()
+```
+
+# Joining data to the map
+The process of joining data is as follows:
+
+- match electoral division names in the shapefile to those in the data frame from the news article
+- use the matches to add voting intention to the `SpatialPolygonsDataFrame`
+- simplify the voting intentions by collapsing the "it's complicated" and "Yes" variations
+
+```{r join-data}
+m1 <- match(nsw$Elect_div, ssm_votes_mp$Electorate)
+
+nsw$Vote <- ssm_votes_mp$`How they would vote`[m1]
+nsw$Vote <- gsub("complicated .+$", "complicated", nsw$Vote)
+nsw$Vote <- gsub("Yes .+$", "Yes", nsw$Vote)
+```
+
+# Map generation
+The voting data can then be added to the map using `leaflet`. Note that two electorates (New England and Bennelong) are missing as they do not currently have a representative.
+
+Mouse-over each electorate indicates the name of the politician and their detailed voting intention.
+
+```{r map-data}
+factpal <- colorFactor("Spectral", nsw$Vote)
+
+leaflet(nsw) %>% 
+  addPolygons(fillColor = ~factpal(Vote), 
+              label = paste(ssm_votes_mp$MP[m1], ssm_votes_mp$`How they would vote`[m1], sep = " : "), 
+              fillOpacity = 1, 
+              weight = 2) %>% 
+  addLegend(position = "bottomright", 
+            pal = factpal, 
+            values = ~Vote, 
+            opacity = 1)
+```
