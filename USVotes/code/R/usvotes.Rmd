@@ -2,13 +2,15 @@
 title: 'The y-axis: to zero or not to zero?'
 author: "Neil Saunders"
 date: "21/11/2016"
-output: 
+output:
+  github_document:
+    toc: true
   html_document: 
     keep_md: yes
     toc: yes
 ---
 
-## Introduction
+# Introduction
 I don’t “do politics” at this blog, but I’m always happy to do charts. [Here’s one](https://twitter.com/yanagiz/status/796382521688727552/photo/1) that’s been doing the rounds on Twitter recently.
 
 What’s the first thing that comes into your mind on seeing that chart? It seems that there are two main responses:
@@ -18,7 +20,7 @@ What’s the first thing that comes into your mind on seeing that chart? It seem
 
 The question then is: when (if ever) is it acceptable to start a y-axis at a non-zero value?
 
-## What would ggplot2 say?
+# What would ggplot2 say?
 Let’s get some data into ggplot2 and find out. There’s lots of publicly-available election data; I’m using Wikipedia pages such as [this one for the 2008 US election](https://en.wikipedia.org/wiki/United_States_presidential_election,_2008).
 
 ```{r get-data, tidy=TRUE}
@@ -72,7 +74,7 @@ ggplot(subset(elections.2, vote == "pop" & year > 2004), aes(year, value)) + geo
 
 I think the blue decline is still apparent. The main issue with this one for me is not any attempt to mislead, just a lot of wasted white space.
 
-## What would Tufte say?
+# What would Tufte say?
 A common response is to ask what Tufte would say. You can [read what he says here](http://www.edwardtufte.com/bboard/q-and-a-fetch-msg?msg_id=00003q). In that particular quote he says the y-axis should reflect the range of the data and had nothing specific to say regarding bar charts. His last sentence is telling:
 
 _Instead, for context, show more data horizontally!_
@@ -83,7 +85,7 @@ ggplot(subset(elections.2, vote == "pop"), aes(year, value)) + geom_line(aes(col
 
 And indeed, it is interesting to add more elections starting from the year 1980.
 
-## Some additional analysis
+# Some additional analysis
 Plotting absolute numbers over time can be misleading, since the total and voting population of the US may vary considerably over 10 elections. We can use the turnout to estimate the total voting population and in turn, the percentage of the total by Democrat and Republican vote. We can also calculate the change in popular vote for each party as a percentage of the previous election.
 
 ```{r percentages, tidy=TRUE}
@@ -105,19 +107,19 @@ elections.2 <- separate(elections.1, key, into = c("party", "vote", sep = "\\.")
 
 ```
 
-### Voters as a percentage of the voting population
+## Voters as a percentage of the voting population
 
 ```{r linechart4, tidy=TRUE}
 ggplot(subset(elections.2, vote == "poppc"), aes(year, value)) + geom_line(aes(color = party)) + geom_point() + scale_x_continuous(breaks = seq(1980, 2016, 4)) + scale_color_manual(values = c("blue", "red"), labels = c("Democrat", "Republican"), name = "Candidate") + scale_y_continuous(labels = comma) + theme_bw() + labs(title = "US Election Popular vote 1980 - 2016 as % of voting population")
 ```
 
-### Percentage change in voters compared with previous election
+## Percentage change in voters compared with previous election
 
 ```{r barchart3, tidy=TRUE}
 ggplot(subset(elections.2, vote == "pc"), aes(year, value)) + geom_bar(aes(fill = party), stat = "identity", position = "dodge") + scale_fill_manual(values = c("blue","red"), labels = c("Democrat", "Republican"), name = "Candidate") + theme_bw() + scale_x_continuous(breaks = seq(1984, 2016, 4)) + labs(title = "US Elections 1984-2016 % change in popular vote from previous election")
 ```
 
-## In summary
+# In summary
 It is interesting to see people react differently to the same chart. A cynic might say “often in a manner that reflects their beliefs.” However, the current collective wisdom seems to be:
 
 * it’s OK to start your y-axis at a non-zero value
